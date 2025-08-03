@@ -1,0 +1,62 @@
+using UnityEngine;
+
+public class GameManager : MonoBehaviour
+{
+    public static GameManager Instance { get; private set; }
+
+    public int score = 0;
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject); // Optional: persists between scenes
+    }
+
+    public void AddScore(int amount)
+    {
+        score += amount;
+        Debug.Log("Score: " + score);
+    }
+}
+
+
+
+Clean Code: 
+public class Player : MonoBehaviour
+{
+    private Animator animator;
+    private AudioSource audioSource;
+    private Rigidbody rb;
+    private float health = 100f;
+    private float jumpForce = 5f;
+    
+    void Start()
+    {
+        rb = GetComponent();
+    }
+    
+    void Update()
+    {
+        // Everything mixed in one place
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            // Movement logic
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            
+            // Animation logic
+            animator.SetTrigger("Jump");
+            
+            // Sound effects
+            audioSource.PlayOneShot(jumpSound);
+            
+            // Game logic
+            health -= 10f;
+            GameObject.Find("UI").GetComponent().enabled = true;
+        }
+    }
+}
